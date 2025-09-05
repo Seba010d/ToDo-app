@@ -78,14 +78,13 @@ function listClickCallback(action, index) {
 
 function newCallback() {
   console.log("newCallback called");
-  console.log(appState);
-
   switch (appState) {
     case "listView":
-      NewListCreateView();
+      showNewListInput();
       break;
     default:
-      console.error(`${appState} is not a valid state`);
+      console.error(`${appState} is not valid`);
+
       break;
   }
 }
@@ -94,83 +93,55 @@ function newCallback() {
 
 // #region functions
 
-// ------------------------------ New List Create View ------------------------------
-function NewListCreateView() {
-  //Content element
-  const content = document.getElementById("content");
-  //clear content
-  content.innerHTML = "";
-  //create section
-  const section = document.createElement("section");
-  //create label
-  const label = document.createElement("label");
-  label.textContent = "Name: ";
-  label.setAttribute("for", "listName");
-  //create input
+//Viser input felt for at lave en ny liste
+function showNewListInput() {
+  if (document.getElementById("newListInput")) return;
+
+  const inputContainer = document.createElement("div");
+  inputContainer.id = "newListInputContainer";
+  //Create input field
   const input = document.createElement("input");
   input.type = "text";
-  input.id = "listName";
-  input.value = "default name";
-  //Create ok button
-  const okButton = document.createElement("button");
-  okButton.textContent = "OK";
-  okButton.addEventListener("click", () => {
-    console.log(`OK clicked, new list name: ${input.value}`);
-    listView();
-  });
-  //Create cancel button
+  input.id = "newListInput";
+  input.placeholder = "New list name";
+  //Create add button
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add";
+  addButton.addEventListener("click", () => handleNewList(input.value));
+  //Create Cancel Button
   const cancelButton = document.createElement("button");
   cancelButton.textContent = "Cancel";
-  cancelButton.addEventListener("click", () => {
-    console.log("Cancel clicked");
-    listView();
-  });
-  //Append elements
-  section.appendChild(label);
-  section.appendChild(input);
-  section.appendChild(okButton);
-  section.appendChild(cancelButton);
-  //append section to content
-  content.appendChild(section);
+  cancelButton.addEventListener("click", () => inputContainer.remove());
+  //Append Elements
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(addButton);
+  inputContainer.appendChild(cancelButton);
+
+  mainContent.prepend(inputContainer);
+  input.focus();
 }
-// -------------------- New Item Create View ------------------------------
-function NewItemCreateView() {
-  //Content element
-  const content = document.getElementById("content");
-  //clear content
-  content.innerHTML = "";
-  //create section
-  const section = document.createElement("section");
-  //Create label
-  const label = document.createElement("label");
-  label.textContent = "Name: ";
-  label.setAttribute("for", "itemName");
-  //Create input
-  const input = document.createElement("input");
-  input.type = "text";
-  input.id = "listName";
-  input.value = "default name";
-  //Create ok button
-  const okButton = document.createElement("button");
-  okButton.textContent = "OK";
-  okButton.addEventListener("click", () => {
-    console.log("OK clicked, list name:", input.value);
-    listItemView();
-  });
-  // Create Cancel button
-  const cancelButton = document.createElement("button");
-  cancelButton.textContent = "Cancel";
-  cancelButton.addEventListener("click", () => {
-    console.log("Cancel clicked");
-    listItemView();
-  });
-  // Append elements
-  section.appendChild(label);
-  section.appendChild(input);
-  section.appendChild(okButton);
-  section.appendChild(cancelButton);
-  // Append section to content
-  content.appendChild(section);
+//får texten ind i input feltet og opretter en ny liste
+function handleNewList(text) {
+  const newListName = text.trim();
+  if (!newListName) return;
+  //find næst id
+  let nextId = 1;
+  if (currentData.lists.length > 0) {
+    const maxId = Math.max(...currentData.lists.map((list) => list.id));
+    nextId = maxId + 1;
+  }
+  //opretter den nye liste
+  const newList = {
+    id: nextId,
+    name: newListName,
+    items: [],
+  };
+  currentData.lists.push(newList);
+  saveData(currentData);
+
+  const container = document.getElementById("newListInputContainer");
+  if (container) container.remove();
+  listView();
 }
 
 function listView() {
