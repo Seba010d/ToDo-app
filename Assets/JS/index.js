@@ -27,6 +27,7 @@ const dummyData = {
 };
 
 const mainContent = document.getElementById("content");
+const newListButton = document.getElementById("newListButton");
 
 initApp();
 
@@ -45,8 +46,7 @@ function initApp() {
 // Setup static event listeners and elements (model code)
 function setupStatics() {
   console.log("setupStatics called");
-  const newButton = document.getElementById("newListButton");
-  newButton.addEventListener("click", newCallback);
+  newListButton.addEventListener("click", newCallback);
   listView();
 }
 
@@ -84,7 +84,6 @@ function newCallback() {
       break;
     default:
       console.error(`${appState} is not valid`);
-
       break;
   }
 }
@@ -120,11 +119,12 @@ function showNewListInput() {
   mainContent.prepend(inputContainer);
   input.focus();
 }
+
 //får texten ind i input feltet og opretter en ny liste
 function handleNewList(text) {
   const newListName = text.trim();
   if (!newListName) return;
-  //find næst id
+  //find næste id
   let nextId = 1;
   if (currentData.lists.length > 0) {
     const maxId = Math.max(...currentData.lists.map((list) => list.id));
@@ -147,6 +147,10 @@ function handleNewList(text) {
 function listView() {
   mainContent.innerHTML = "";
   appState = "listView";
+
+  // Vis "new"-knappen
+  newListButton.style.display = "block";
+
   currentData.lists.forEach((list, index) => {
     const listElement = document.createElement("div");
     listElement.className = "listview";
@@ -166,10 +170,32 @@ function listItemView() {
   }
   appState = "itemView";
   mainContent.innerHTML = "";
+
+  // Skjul "new"-knappen
+  newListButton.style.display = "none";
+
   const title = document.createElement("h2");
   title.textContent = list.name;
   mainContent.appendChild(title);
 
+  // 🔹 Input + Add-knap til nye items (altid vist)
+  const inputContainer = document.createElement("div");
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "New item";
+
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add";
+  addButton.addEventListener("click", () => {
+    handleNewItem(input.value);
+    input.value = ""; // ryd feltet efter tilføjelse
+  });
+
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(addButton);
+  mainContent.appendChild(inputContainer);
+
+  // 🔹 Items vises under inputfeltet
   const itemsContainer = document.createElement("div");
   list.items.forEach((item, itemIndex) => {
     const itemElement = document.createElement("div");
@@ -179,12 +205,41 @@ function listItemView() {
     itemsContainer.appendChild(itemElement);
   });
   mainContent.appendChild(itemsContainer);
+
   const backButton = document.createElement("button");
   backButton.textContent = "Back";
   backButton.addEventListener("click", () => {
     listView();
   });
   mainContent.appendChild(backButton);
+}
+
+// 🔹 Funktion til at tilføje nyt item
+function handleNewItem(text) {
+  const newItemName = text.trim();
+  if (!newItemName) return;
+
+  const list = currentData.lists[activeList];
+  if (!list) return;
+
+  // find næste id
+  let nextId = 1;
+  if (list.items.length > 0) {
+    const maxId = Math.max(...list.items.map((item) => item.id));
+    nextId = maxId + 1;
+  }
+
+  const newItem = {
+    id: nextId,
+    name: newItemName,
+    completed: false,
+  };
+
+  list.items.push(newItem);
+  saveData(currentData);
+
+  // opdater view så det nye item vises
+  listItemView();
 }
 
 // #endregion
