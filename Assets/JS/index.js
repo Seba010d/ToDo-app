@@ -148,7 +148,6 @@ function listView() {
   mainContent.innerHTML = "";
   appState = "listView";
 
-  // Vis "new"-knappen
   newListButton.style.display = "block";
 
   currentData.lists.forEach((list, index) => {
@@ -171,14 +170,13 @@ function listItemView() {
   appState = "itemView";
   mainContent.innerHTML = "";
 
-  // Skjul "new"-knappen
   newListButton.style.display = "none";
 
   const title = document.createElement("h2");
   title.textContent = list.name;
   mainContent.appendChild(title);
 
-  // 🔹 Input + Add-knap til nye items (altid vist)
+  // Input + Add-knap til nye items
   const inputContainer = document.createElement("div");
   const input = document.createElement("input");
   input.type = "text";
@@ -188,14 +186,14 @@ function listItemView() {
   addButton.textContent = "Add";
   addButton.addEventListener("click", () => {
     handleNewItem(input.value);
-    input.value = ""; // ryd feltet efter tilføjelse
+    input.value = "";
   });
 
   inputContainer.appendChild(input);
   inputContainer.appendChild(addButton);
   mainContent.appendChild(inputContainer);
 
-  // 🔹 Items vises under inputfeltet
+  // Items vises under inputfeltet
   const itemsContainer = document.createElement("div");
   list.items.forEach((item, itemIndex) => {
     const itemElement = document.createElement("div");
@@ -214,7 +212,7 @@ function listItemView() {
   mainContent.appendChild(backButton);
 }
 
-// 🔹 Funktion til at tilføje nyt item
+// Funktion til at tilføje nyt item
 function handleNewItem(text) {
   const newItemName = text.trim();
   if (!newItemName) return;
