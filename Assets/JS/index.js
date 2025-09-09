@@ -43,7 +43,7 @@ function initApp() {
   setupStatics();
 }
 
-// Setup static event listeners and elements (model code)
+// Setup static event listeners and elements
 function setupStatics() {
   console.log("setupStatics called");
   newListButton.addEventListener("click", newCallback);
@@ -55,20 +55,16 @@ function setupStatics() {
 // #region Callback
 
 function listClickCallback(action, index) {
-  console.log(action, index);
-
-  activeList = index;
-
   switch (action) {
     case "showList":
-      console.log(`you chose ${action} ${index}`);
+      activeList = index;
       listItemView();
       break;
     case "editList":
-      console.log(`you chose ${action} ${index}`);
+      handleEditDelete("list", "edit", index);
       break;
     case "deleteList":
-      console.log(`you chose ${action} ${index}`);
+      handleEditDelete("list", "delete", index);
       break;
     default:
       console.error(`${action} ${index} is not valid`);
@@ -76,8 +72,11 @@ function listClickCallback(action, index) {
   }
 }
 
+function itemClickCallback(action, itemIndex) {
+  handleEditDelete("item", action === "editItem" ? "edit" : "delete", itemIndex);
+}
+
 function newCallback() {
-  console.log("newCallback called");
   switch (appState) {
     case "listView":
       showNewListInput();
@@ -92,7 +91,7 @@ function newCallback() {
 
 // #region functions
 
-//Viser input felt for at lave en ny liste
+// Viser inputfelt for at lave en ny liste
 function showNewListInput() {
   if (document.getElementById("newListInput")) return;
 
@@ -120,7 +119,7 @@ function showNewListInput() {
   input.focus();
 }
 
-//får texten ind i input feltet og opretter en ny liste
+// Opretter en ny liste
 function handleNewList(text) {
   const newListName = text.trim();
   if (!newListName) return;
@@ -136,6 +135,7 @@ function handleNewList(text) {
     name: newListName,
     items: [],
   };
+
   currentData.lists.push(newList);
   saveData(currentData);
 
@@ -144,6 +144,7 @@ function handleNewList(text) {
   listView();
 }
 
+// Viser alle lister
 function listView() {
   mainContent.innerHTML = "";
   appState = "listView";
@@ -160,8 +161,8 @@ function listView() {
   });
 }
 
+// Viser items i en liste
 function listItemView() {
-  console.log("List item view for index:", activeList);
   const list = currentData.lists[activeList];
   if (!list) {
     console.error("List not found:", activeList);
@@ -206,13 +207,11 @@ function listItemView() {
 
   const backButton = document.createElement("button");
   backButton.textContent = "Back";
-  backButton.addEventListener("click", () => {
-    listView();
-  });
+  backButton.addEventListener("click", listView);
   mainContent.appendChild(backButton);
 }
 
-// Funktion til at tilføje nyt item
+// Tilføjer nyt item
 function handleNewItem(text) {
   const newItemName = text.trim();
   if (!newItemName) return;
@@ -238,6 +237,47 @@ function handleNewItem(text) {
 
   // opdater view så det nye item vises
   listItemView();
+}
+
+// #endregion
+
+// #region Edit/Delete handler
+
+function handleEditDelete(type, action, index) {
+  if (type === "list") {
+    const list = currentData.lists[index];
+    if (action === "delete") {
+      if (confirm(`Are you sure you want to delete "${list.name}"?`)) {
+        currentData.lists.splice(index, 1);
+        saveData(currentData);
+        listView();
+      }
+    } else if (action === "edit") {
+      const newName = prompt("Edit list name:", list.name);
+      if (newName && newName.trim() !== "") {
+        list.name = newName.trim();
+        saveData(currentData);
+        listView();
+      }
+    }
+  } else if (type === "item") {
+    const list = currentData.lists[activeList];
+    const item = list.items[index];
+    if (action === "delete") {
+      if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
+        list.items.splice(index, 1);
+        saveData(currentData);
+        listItemView();
+      }
+    } else if (action === "edit") {
+      const newItemName = prompt("Edit item name:", item.name);
+      if (newItemName && newItemName.trim() !== "") {
+        item.name = newItemName.trim();
+        saveData(currentData);
+        listItemView();
+      }
+    }
+  }
 }
 
 // #endregion
