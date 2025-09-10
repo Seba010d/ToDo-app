@@ -1,1 +1,30 @@
 /* @import "Reset.css"; */
+
+/* Default (light) */
+body.light {
+  background-color: white;
+  color: black;
+}
+
+body.light button {
+  background-color: #eee;
+  color: black;
+}
+
+/* Dark mode */
+body.dark {
+  background-color: #222;
+  color: white;
+}
+
+body.dark button {
+  background-color: #444;
+  color: white;
+}
+
+/* Modal box juster til dark mode */
+body.dark .modalBox {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+}

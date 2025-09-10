@@ -370,6 +370,30 @@ function openConfirmBox(message, callback) {
 
 // #endregion
 
+//#region Light/Dark mode
+
+// Hent body
+const body = document.body;
+
+// Check om brugeren allerede har valgt et tema
+let theme = localStorage.getItem("theme") || "light";
+body.classList.add(theme);
+
+// Toggle funktion
+toggleThemeButton.addEventListener("click", () => {
+  if (body.classList.contains("light")) {
+    body.classList.remove("light");
+    body.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+  } else {
+    body.classList.remove("dark");
+    body.classList.add("light");
+    localStorage.setItem("theme", "light");
+  }
+});
+
+//#endregion
+
 // #region model code
 
 // Simulate reading data from a database or API
