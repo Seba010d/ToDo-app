@@ -194,13 +194,39 @@ function listItemView() {
   inputContainer.appendChild(addButton);
   mainContent.appendChild(inputContainer);
 
-  // Items vises under inputfeltet
+  // Items vises under inputfeltet med check/uncheck
   const itemsContainer = document.createElement("div");
   list.items.forEach((item, itemIndex) => {
     const itemElement = document.createElement("div");
-    itemElement.innerHTML = `<span>${item.name}</span>
-        <button onclick="itemClickCallback('editItem',${itemIndex})">edit</button>
-        <button onclick="itemClickCallback('deleteItem',${itemIndex})">delete</button>`;
+
+    // Checkbox til completed
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.completed;
+    checkbox.addEventListener("change", () => {
+      item.completed = checkbox.checked;
+      saveData(currentData);
+      span.style.textDecoration = item.completed ? "line-through" : "none";
+    });
+
+    const span = document.createElement("span");
+    span.textContent = item.name;
+    span.style.textDecoration = item.completed ? "line-through" : "none";
+
+    // Edit og delete knapper
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "edit";
+    editBtn.addEventListener("click", () => itemClickCallback("editItem", itemIndex));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "delete";
+    deleteBtn.addEventListener("click", () => itemClickCallback("deleteItem", itemIndex));
+
+    itemElement.appendChild(checkbox);
+    itemElement.appendChild(span);
+    itemElement.appendChild(editBtn);
+    itemElement.appendChild(deleteBtn);
+
     itemsContainer.appendChild(itemElement);
   });
   mainContent.appendChild(itemsContainer);
@@ -284,6 +310,7 @@ function handleEditDelete(type, action, index) {
 
 function openEditBox(title, currentValue, callback) {
   const box = document.createElement("div");
+  box.className = "modalBox";
 
   const heading = document.createElement("h3");
   heading.textContent = title;
@@ -316,6 +343,7 @@ function openEditBox(title, currentValue, callback) {
 
 function openConfirmBox(message, callback) {
   const box = document.createElement("div");
+  box.className = "modalBox";
 
   const msg = document.createElement("p");
   msg.textContent = message;
