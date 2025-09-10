@@ -272,37 +272,86 @@ function handleNewItem(text) {
 function handleEditDelete(type, action, index) {
   if (type === "list") {
     const list = currentData.lists[index];
-    if (action === "delete") {
+    const listElement = mainContent.children[index];
+    const editBtn = listElement.querySelector("button:nth-of-type(1)");
+    const deleteBtn = listElement.querySelector("button:nth-of-type(2)");
+
+    if (action === "edit") {
+      // Skjul knapper under edit
+      editBtn.style.display = "none";
+      deleteBtn.style.display = "none";
+
+      // Inline edit input
+      const h2 = listElement.querySelector("h2");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = list.name;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.addEventListener("click", () => {
+        if (input.value.trim() !== "") {
+          list.name = input.value.trim();
+          saveData(currentData);
+        }
+        listView();
+      });
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.addEventListener("click", () => listView());
+
+      h2.replaceWith(input);
+      listElement.appendChild(saveBtn);
+      listElement.appendChild(cancelBtn);
+      input.focus();
+    } else if (action === "delete") {
       openConfirmBox(`Delete list "${list.name}"?`, () => {
         currentData.lists.splice(index, 1);
         saveData(currentData);
         listView();
       });
-    } else if (action === "edit") {
-      openEditBox("Edit list name", list.name, (newName) => {
-        if (newName && newName.trim() !== "") {
-          list.name = newName.trim();
-          saveData(currentData);
-          listView();
-        }
-      });
     }
   } else if (type === "item") {
     const list = currentData.lists[activeList];
     const item = list.items[index];
-    if (action === "delete") {
+    const itemElement = mainContent.querySelectorAll("div")[index];
+    const editBtn = itemElement.querySelector("button:nth-of-type(1)");
+    const deleteBtn = itemElement.querySelector("button:nth-of-type(2)");
+
+    if (action === "edit") {
+      // Skjul knapper under edit
+      editBtn.style.display = "none";
+      deleteBtn.style.display = "none";
+
+      const span = itemElement.querySelector("span");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = item.name;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.addEventListener("click", () => {
+        if (input.value.trim() !== "") {
+          item.name = input.value.trim();
+          saveData(currentData);
+        }
+        listItemView();
+      });
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.addEventListener("click", () => listItemView());
+
+      span.replaceWith(input);
+      itemElement.appendChild(saveBtn);
+      itemElement.appendChild(cancelBtn);
+      input.focus();
+    } else if (action === "delete") {
       openConfirmBox(`Delete item "${item.name}"?`, () => {
         list.items.splice(index, 1);
         saveData(currentData);
         listItemView();
-      });
-    } else if (action === "edit") {
-      openEditBox("Edit item name", item.name, (newItemName) => {
-        if (newItemName && newItemName.trim() !== "") {
-          item.name = newItemName.trim();
-          saveData(currentData);
-          listItemView();
-        }
       });
     }
   }
