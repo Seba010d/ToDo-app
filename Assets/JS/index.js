@@ -241,43 +241,103 @@ function handleNewItem(text) {
 
 // #endregion
 
-// #region Edit/Delete handler
+// #region Edit/Delete
 
 function handleEditDelete(type, action, index) {
   if (type === "list") {
     const list = currentData.lists[index];
     if (action === "delete") {
-      if (confirm(`Are you sure you want to delete "${list.name}"?`)) {
+      openConfirmBox(`Delete list "${list.name}"?`, () => {
         currentData.lists.splice(index, 1);
         saveData(currentData);
         listView();
-      }
+      });
     } else if (action === "edit") {
-      const newName = prompt("Edit list name:", list.name);
-      if (newName && newName.trim() !== "") {
-        list.name = newName.trim();
-        saveData(currentData);
-        listView();
-      }
+      openEditBox("Edit list name", list.name, (newName) => {
+        if (newName && newName.trim() !== "") {
+          list.name = newName.trim();
+          saveData(currentData);
+          listView();
+        }
+      });
     }
   } else if (type === "item") {
     const list = currentData.lists[activeList];
     const item = list.items[index];
     if (action === "delete") {
-      if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
+      openConfirmBox(`Delete item "${item.name}"?`, () => {
         list.items.splice(index, 1);
         saveData(currentData);
         listItemView();
-      }
+      });
     } else if (action === "edit") {
-      const newItemName = prompt("Edit item name:", item.name);
-      if (newItemName && newItemName.trim() !== "") {
-        item.name = newItemName.trim();
-        saveData(currentData);
-        listItemView();
-      }
+      openEditBox("Edit item name", item.name, (newItemName) => {
+        if (newItemName && newItemName.trim() !== "") {
+          item.name = newItemName.trim();
+          saveData(currentData);
+          listItemView();
+        }
+      });
     }
   }
+}
+
+function openEditBox(title, currentValue, callback) {
+  const box = document.createElement("div");
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentValue;
+
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Save";
+  saveBtn.addEventListener("click", () => {
+    callback(input.value);
+    box.remove();
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", () => {
+    box.remove();
+  });
+
+  box.appendChild(heading);
+  box.appendChild(input);
+  box.appendChild(saveBtn);
+  box.appendChild(cancelBtn);
+
+  document.body.appendChild(box);
+  input.focus();
+}
+
+function openConfirmBox(message, callback) {
+  const box = document.createElement("div");
+
+  const msg = document.createElement("p");
+  msg.textContent = message;
+
+  const yesBtn = document.createElement("button");
+  yesBtn.textContent = "Yes";
+  yesBtn.addEventListener("click", () => {
+    callback();
+    box.remove();
+  });
+
+  const noBtn = document.createElement("button");
+  noBtn.textContent = "No";
+  noBtn.addEventListener("click", () => {
+    box.remove();
+  });
+
+  box.appendChild(msg);
+  box.appendChild(yesBtn);
+  box.appendChild(noBtn);
+
+  document.body.appendChild(box);
 }
 
 // #endregion
