@@ -155,8 +155,8 @@ function listView() {
     const listElement = document.createElement("div");
     listElement.className = "listview";
     listElement.innerHTML = `<h2 onclick="listClickCallback('showList',${index})">${list.name}</h2>
-       <button onclick="listClickCallback('editList',${index})">edit</button>
-       <button onclick="listClickCallback('deleteList',${index})">delete</button>`;
+       <button onclick="listClickCallback('editList',${index})"><i class="fa-solid fa-pen-to-square"></i></button>
+       <button onclick="listClickCallback('deleteList',${index})"><i class="fa-solid fa-trash"></i></button>`;
     mainContent.appendChild(listElement);
   });
 }
@@ -213,13 +213,13 @@ function listItemView() {
     span.textContent = item.name;
     span.style.textDecoration = item.completed ? "line-through" : "none";
 
-    // Edit og delete knapper
+    // Edit og delete knapper med icons
     const editBtn = document.createElement("button");
-    editBtn.textContent = "edit";
+    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
     editBtn.addEventListener("click", () => itemClickCallback("editItem", itemIndex));
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "delete";
+    deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
     deleteBtn.addEventListener("click", () => itemClickCallback("deleteItem", itemIndex));
 
     itemElement.appendChild(checkbox);
@@ -428,16 +428,24 @@ const body = document.body;
 let theme = localStorage.getItem("theme") || "light";
 body.classList.add(theme);
 
+// Font Awesome icon
+const themeIcon = document.getElementById("themeIcon");
+
+// Initial icon baseret på gemt tema
+themeIcon.className = theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+
 // Toggle funktion
 toggleThemeButton.addEventListener("click", () => {
   if (body.classList.contains("light")) {
     body.classList.remove("light");
     body.classList.add("dark");
     localStorage.setItem("theme", "dark");
+    themeIcon.className = "fa-solid fa-moon";
   } else {
     body.classList.remove("dark");
     body.classList.add("light");
     localStorage.setItem("theme", "light");
+    themeIcon.className = "fa-solid fa-sun";
   }
 });
 
