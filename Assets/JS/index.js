@@ -154,6 +154,7 @@ function listView() {
   currentData.lists.forEach((list, index) => {
     const listElement = document.createElement("div");
     listElement.className = "listview";
+    // Edit og delete knapper som ikoner
     listElement.innerHTML = `<h2 onclick="listClickCallback('showList',${index})">${list.name}</h2>
        <button onclick="listClickCallback('editList',${index})"><i class="fa-solid fa-pen-to-square"></i></button>
        <button onclick="listClickCallback('deleteList',${index})"><i class="fa-solid fa-trash"></i></button>`;
@@ -161,27 +162,38 @@ function listView() {
   });
 }
 
-// Viser items i en liste
+// Viser items i en liste med back-knap øverst
 function listItemView() {
   const list = currentData.lists[activeList];
-  if (!list) {
-    console.error("List not found:", activeList);
-    return;
-  }
+  if (!list) return;
+
   appState = "itemView";
   mainContent.innerHTML = "";
 
-  newListButton.style.display = "none";
+  // --- Vis titel i header ---
+  const headline = document.getElementById("headline");
+  headline.textContent = list.name;
 
-  const title = document.createElement("h2");
-  title.textContent = list.name;
-  mainContent.appendChild(title);
+  // --- Vis Back-knap i header ---
+  let backButton = document.querySelector("header .backButton");
+  if (!backButton) {
+    backButton = document.createElement("button");
+    backButton.className = "backButton";
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+    backButton.addEventListener("click", () => {
+      headline.textContent = "ToDo app"; // genskab standardtitel
+      backButton.style.display = "none";
+      listView();
+    });
+    document.querySelector("header").appendChild(backButton);
+  }
+  backButton.style.display = "block";
 
   // Input + Add-knap til nye items
   const inputContainer = document.createElement("div");
   const input = document.createElement("input");
   input.type = "text";
-  input.placeholder = "New item";
+  input.placeholder = "Type new task...";
 
   const addButton = document.createElement("button");
   addButton.textContent = "Add";
@@ -213,7 +225,7 @@ function listItemView() {
     span.textContent = item.name;
     span.style.textDecoration = item.completed ? "line-through" : "none";
 
-    // Edit og delete knapper med icons
+    // Edit og delete knapper med ikoner
     const editBtn = document.createElement("button");
     editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
     editBtn.addEventListener("click", () => itemClickCallback("editItem", itemIndex));
@@ -230,11 +242,6 @@ function listItemView() {
     itemsContainer.appendChild(itemElement);
   });
   mainContent.appendChild(itemsContainer);
-
-  const backButton = document.createElement("button");
-  backButton.textContent = "Back";
-  backButton.addEventListener("click", listView);
-  mainContent.appendChild(backButton);
 }
 
 // Tilføjer nyt item
