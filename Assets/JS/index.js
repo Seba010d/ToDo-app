@@ -170,6 +170,9 @@ function listItemView() {
   appState = "itemView";
   mainContent.innerHTML = "";
 
+  // --- Skjul "Make new list" knap når man er inde i en liste ---
+  newListButton.style.display = "none";
+
   // --- Vis titel i header ---
   const headline = document.getElementById("headline");
   headline.textContent = list.name;
