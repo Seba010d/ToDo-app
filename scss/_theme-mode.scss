@@ -1,0 +1,13 @@
+@use "variables" as *;
+
+// Light theme (default)
+body.light {
+  background-color: $clr-bg-light;
+  color: $clr-dark;
+}
+
+// Dark theme
+body.dark {
+  background-color: $clr-bg-dark;
+  color: $clr-light-gray;
+}

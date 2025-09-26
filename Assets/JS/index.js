@@ -154,10 +154,12 @@ function listView() {
   currentData.lists.forEach((list, index) => {
     const listElement = document.createElement("div");
     listElement.className = "listview";
-    // Edit og delete knapper som ikoner
+    // Edit og delete knapper som ikoner med bedre struktur
     listElement.innerHTML = `<h2 onclick="listClickCallback('showList',${index})">${list.name}</h2>
-       <button onclick="listClickCallback('editList',${index})"><i class="fa-solid fa-pen-to-square"></i></button>
-       <button onclick="listClickCallback('deleteList',${index})"><i class="fa-solid fa-trash"></i></button>`;
+       <div class="list-actions">
+         <button onclick="listClickCallback('editList',${index})"><i class="fa-solid fa-pen-to-square"></i></button>
+         <button onclick="listClickCallback('deleteList',${index})"><i class="fa-solid fa-trash"></i></button>
+       </div>`;
     mainContent.appendChild(listElement);
   });
 }
@@ -179,6 +181,10 @@ function listItemView() {
   // --- Vis Back-knap i header ---
   let backButton = document.querySelector("header .backButton");
   if (!backButton) {
+    // Sektionerne eksisterer allerede i HTML
+    const centerSection = document.querySelector("header .center-section");
+
+    // Opret back button
     backButton = document.createElement("button");
     backButton.className = "backButton";
     backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
@@ -187,21 +193,34 @@ function listItemView() {
       backButton.style.display = "none";
       listView();
     });
-    document.querySelector("header").appendChild(backButton);
+
+    // Tilføj back button til center section ved siden af headline
+    centerSection.insertBefore(backButton, headline);
   }
   backButton.style.display = "block";
 
   // Input + Add-knap til nye items
   const inputContainer = document.createElement("div");
+  inputContainer.className = "new-item-container";
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = "Type new task...";
 
   const addButton = document.createElement("button");
   addButton.textContent = "Add";
-  addButton.addEventListener("click", () => {
+
+  const addItem = () => {
     handleNewItem(input.value);
     input.value = "";
+  };
+
+  addButton.addEventListener("click", addItem);
+
+  // Support for Enter key
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      addItem();
+    }
   });
 
   inputContainer.appendChild(input);
@@ -210,8 +229,10 @@ function listItemView() {
 
   // Items vises under inputfeltet med check/uncheck
   const itemsContainer = document.createElement("div");
+  itemsContainer.className = "items-container";
   list.items.forEach((item, itemIndex) => {
     const itemElement = document.createElement("div");
+    itemElement.className = "itemview";
 
     // Checkbox til completed
     const checkbox = document.createElement("input");
@@ -220,14 +241,20 @@ function listItemView() {
     checkbox.addEventListener("change", () => {
       item.completed = checkbox.checked;
       saveData(currentData);
-      span.style.textDecoration = item.completed ? "line-through" : "none";
+      span.classList.toggle("completed", item.completed);
     });
 
     const span = document.createElement("span");
+    span.className = "item-text";
     span.textContent = item.name;
-    span.style.textDecoration = item.completed ? "line-through" : "none";
+    if (item.completed) {
+      span.classList.add("completed");
+    }
 
     // Edit og delete knapper med ikoner
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "item-actions";
+
     const editBtn = document.createElement("button");
     editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
     editBtn.addEventListener("click", () => itemClickCallback("editItem", itemIndex));
@@ -236,10 +263,12 @@ function listItemView() {
     deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
     deleteBtn.addEventListener("click", () => itemClickCallback("deleteItem", itemIndex));
 
+    actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(deleteBtn);
+
     itemElement.appendChild(checkbox);
     itemElement.appendChild(span);
-    itemElement.appendChild(editBtn);
-    itemElement.appendChild(deleteBtn);
+    itemElement.appendChild(actionsDiv);
 
     itemsContainer.appendChild(itemElement);
   });
@@ -282,13 +311,13 @@ function handleEditDelete(type, action, index) {
   if (type === "list") {
     const list = currentData.lists[index];
     const listElement = mainContent.children[index];
-    const editBtn = listElement.querySelector("button:nth-of-type(1)");
-    const deleteBtn = listElement.querySelector("button:nth-of-type(2)");
+    const actionsDiv = listElement.querySelector(".list-actions");
+    const editBtn = actionsDiv.querySelector("button:nth-of-type(1)");
+    const deleteBtn = actionsDiv.querySelector("button:nth-of-type(2)");
 
     if (action === "edit") {
-      // Skjul knapper under edit
-      editBtn.style.display = "none";
-      deleteBtn.style.display = "none";
+      // Skjul action buttons under edit
+      actionsDiv.style.display = "none";
 
       // Inline edit input
       const h2 = listElement.querySelector("h2");
@@ -310,9 +339,14 @@ function handleEditDelete(type, action, index) {
       cancelBtn.textContent = "Cancel";
       cancelBtn.addEventListener("click", () => listView());
 
+      // Create edit actions container
+      const editActionsDiv = document.createElement("div");
+      editActionsDiv.className = "edit-actions";
+      editActionsDiv.appendChild(saveBtn);
+      editActionsDiv.appendChild(cancelBtn);
+
       h2.replaceWith(input);
-      listElement.appendChild(saveBtn);
-      listElement.appendChild(cancelBtn);
+      listElement.appendChild(editActionsDiv);
       input.focus();
     } else if (action === "delete") {
       openConfirmBox(`Delete list "${list.name}"?`, () => {
@@ -324,37 +358,50 @@ function handleEditDelete(type, action, index) {
   } else if (type === "item") {
     const list = currentData.lists[activeList];
     const item = list.items[index];
-    const itemElement = mainContent.querySelectorAll("div")[index];
-    const editBtn = itemElement.querySelector("button:nth-of-type(1)");
-    const deleteBtn = itemElement.querySelector("button:nth-of-type(2)");
+    const itemsContainer = mainContent.querySelector(".items-container");
+    const itemElement = itemsContainer.children[index];
+    const actionsDiv = itemElement.querySelector(".item-actions");
 
     if (action === "edit") {
-      // Skjul knapper under edit
-      editBtn.style.display = "none";
-      deleteBtn.style.display = "none";
+      // Skjul action buttons under edit
+      actionsDiv.style.display = "none";
 
-      const span = itemElement.querySelector("span");
+      const span = itemElement.querySelector(".item-text");
       const input = document.createElement("input");
       input.type = "text";
       input.value = item.name;
 
-      const saveBtn = document.createElement("button");
-      saveBtn.textContent = "Save";
-      saveBtn.addEventListener("click", () => {
+      const saveItem = () => {
         if (input.value.trim() !== "") {
           item.name = input.value.trim();
           saveData(currentData);
         }
         listItemView();
+      };
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.addEventListener("click", saveItem);
+
+      // Support for Enter key
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          saveItem();
+        }
       });
 
       const cancelBtn = document.createElement("button");
       cancelBtn.textContent = "Cancel";
       cancelBtn.addEventListener("click", () => listItemView());
 
+      // Create edit actions container
+      const editActionsDiv = document.createElement("div");
+      editActionsDiv.className = "edit-actions";
+      editActionsDiv.appendChild(saveBtn);
+      editActionsDiv.appendChild(cancelBtn);
+
       span.replaceWith(input);
-      itemElement.appendChild(saveBtn);
-      itemElement.appendChild(cancelBtn);
+      itemElement.appendChild(editActionsDiv);
       input.focus();
     } else if (action === "delete") {
       openConfirmBox(`Delete item "${item.name}"?`, () => {
@@ -439,6 +486,7 @@ body.classList.add(theme);
 
 // Font Awesome icon
 const themeIcon = document.getElementById("themeIcon");
+const toggleThemeButton = document.getElementById("toggleThemeButton");
 
 // Initial icon baseret på gemt tema
 themeIcon.className = theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon";

@@ -1,0 +1,75 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+header {
+  @include flex-center;
+  width: 100%;
+  padding: 1rem 2rem;
+  position: relative;
+
+  .left-section {
+    @include flex-center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .center-section {
+    @include flex-center;
+    flex: 1;
+    justify-content: center;
+    position: relative;
+  }
+
+  .right-section {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  #toggleThemeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    padding: 0.5rem;
+  }
+
+  #headline {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .backButton {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: inherit;
+    padding: 0.5rem;
+    display: none;
+    position: absolute;
+    left: -2rem;
+  }
+
+  // Mobil justeringer
+  @media (max-width: 768px) {
+    padding: 1rem 1rem;
+
+    .backButton {
+      left: -2.5rem;
+      font-size: 1.8rem;
+    }
+
+    #headline {
+      font-size: 1.6rem;
+    }
+
+    #toggleThemeButton {
+      font-size: 1.3rem;
+    }
+  }
+}

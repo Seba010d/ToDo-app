@@ -1,38 +1,387 @@
-/* @import "Reset.css"; */
-
-:root {
-  --clr-light-gray: #d9d9d9;
-  --clr-dark: #1c2833;
-  --clr-green: #30c966;
-  --clr-bg-dark: #010914;
-  --clr-bg-light: #ffffff;
+header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 2rem;
+  position: relative;
+}
+header .left-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: flex-start;
+}
+header .center-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+}
+header .right-section {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+header #toggleThemeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0.5rem;
+}
+header #headline {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+header .backButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0.5rem;
+  display: none;
+  position: absolute;
+  left: -2rem;
+}
+@media (max-width: 768px) {
+  header {
+    padding: 1rem 1rem;
+  }
+  header .backButton {
+    left: -2.5rem;
+    font-size: 1.8rem;
+  }
+  header #headline {
+    font-size: 1.6rem;
+  }
+  header #toggleThemeButton {
+    font-size: 1.3rem;
+  }
 }
 
-/* Default (light) */
-body.light {
-  background-color: var(--clr-bg-light);
-  color: var(--clr-dark);
+.listview {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+.listview h2 {
+  margin: 0;
+  flex: 1;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.listview .list-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+.listview button {
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #1c2833;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+}
+.listview button:first-of-type {
+  color: #30c966;
+}
+.listview button:last-of-type {
+  color: #dc3545;
+}
+.listview button i {
+  font-size: 0.9rem;
+}
+.listview input[type=text] {
+  flex: 1;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  outline: none;
+}
+.listview .edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+.listview .edit-actions button {
+  background-color: #30c966;
+  color: #d9d9d9;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.listview .edit-actions button:last-of-type {
+  background-color: #1c2833;
 }
 
-body.light button {
-  background-color: var(--clr-light-gray);
-  color: var(--clr-dark);
+@media (max-width: 768px) {
+  .listview {
+    padding: 0.8rem;
+    margin: 0.3rem 0;
+  }
+  .listview h2 {
+    font-size: 1rem;
+  }
+  .listview .list-actions {
+    gap: 0.3rem;
+    margin-left: 1rem;
+  }
+  .listview button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0.3rem;
+  }
+  .listview button i {
+    font-size: 0.9rem;
+  }
+  .listview input[type=text] {
+    font-size: 1rem;
+    padding: 0.4rem;
+  }
+  .listview .edit-actions {
+    gap: 0.4rem;
+    margin-left: 1rem;
+  }
+  .listview .edit-actions button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+.itemview {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  margin: 0.3rem 0;
+  border-radius: 6px;
+  background-color: #d9d9d9;
+}
+.itemview input[type=checkbox] {
+  margin: 0 1rem 0 0;
+  cursor: pointer;
+  transform: scale(1.2);
+  accent-color: #30c966;
+}
+.itemview .item-text {
+  flex: 1;
+  font-size: 1rem;
+  color: #1c2833;
+  cursor: pointer;
+  padding: 0.2rem 0;
+}
+.itemview .item-text.completed {
+  text-decoration: line-through;
+  color: #1c2833;
+  opacity: 0.7;
+}
+.itemview .item-actions {
+  display: flex;
+  gap: 0.3rem;
+  margin-left: 1rem;
+  opacity: 1;
+}
+.itemview button {
+  background: none;
+  border-radius: 4px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #1c2833;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+}
+.itemview button:first-of-type {
+  color: #30c966;
+}
+.itemview button:last-of-type {
+  color: #dc3545;
+}
+.itemview button i {
+  font-size: 0.9rem;
+}
+.itemview input[type=text] {
+  flex: 1;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  background-color: #ffffff;
+}
+.itemview .edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 1rem;
+}
+.itemview .edit-actions button {
+  background-color: #30c966;
+  color: #d9d9d9;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  opacity: 1;
+}
+.itemview .edit-actions button:last-of-type {
+  background-color: #1c2833;
+  color: #d9d9d9;
 }
 
-/* Dark mode */
-body.dark {
-  background-color: var(--clr-bg-dark);
-  color: var(--clr-light-gray);
+.new-item-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #d9d9d9;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+}
+.new-item-container input {
+  flex: 1;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  outline: none;
+  background-color: #ffffff;
+}
+.new-item-container input:focus {
+  border-color: #30c966;
+  box-shadow: 0 0 5px rgba(48, 201, 102, 0.2);
+}
+.new-item-container input::placeholder {
+  color: rgba(28, 40, 51, 0.6);
+}
+.new-item-container button {
+  background-color: #30c966;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+.new-item-container button:active {
+  transform: translateY(1px);
 }
 
-body.dark button {
-  background-color: var(--clr-dark);
-  color: var(--clr-light-gray);
+.items-container {
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Modal box juster til dark mode */
-body.dark .modalBox {
-  background-color: #333;
-  color: var(--clr-light-gray);
-  border: 1px solid #555;
+@media (max-width: 768px) {
+  .itemview {
+    padding: 0.6rem;
+    margin: 0.2rem 0;
+  }
+  .itemview input[type=checkbox] {
+    margin: 0 0.8rem 0 0;
+    transform: scale(1.1);
+  }
+  .itemview .item-text {
+    font-size: 0.9rem;
+  }
+  .itemview .item-actions {
+    gap: 0.2rem;
+    margin-left: 0.8rem;
+  }
+  .itemview button {
+    min-width: 28px;
+    height: 28px;
+    padding: 0.3rem;
+  }
+  .itemview button i {
+    font-size: 0.8rem;
+  }
+  .itemview .edit-actions {
+    gap: 0.3rem;
+    margin-left: 0.8rem;
+  }
+  .itemview .edit-actions button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .new-item-container {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    gap: 0.4rem;
+  }
+  .new-item-container input {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+  .new-item-container button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .items-container {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
 }
+body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  width: 100%;
+}
+
+#content {
+  width: 100%;
+  max-width: 800px;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+footer {
+  width: 100%;
+  max-width: 800px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+  }
+  #content {
+    padding: 0 0.5rem;
+    max-width: 100%;
+  }
+  footer {
+    padding: 0.8rem 0.5rem;
+  }
+  footer button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+}/*# sourceMappingURL=style.css.map */
